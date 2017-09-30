@@ -27,7 +27,7 @@ public class TerminalFunction {
 	}
 	
 	public String perform(String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return (String) method.invoke(null, Arrays.copyOfRange(args, 1, args.length));
+		return (String) method.invoke(null, args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : null);
 	}
 
 	public boolean accepts(String[] args) {
