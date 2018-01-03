@@ -10,10 +10,9 @@ import java.util.stream.Stream;
 import mylib.lambdautils.ThrowingConsumer;
 import mylib.terminal.exceptions.IllegalTerminalFunctionException;
 
-
-
 /**
- * Basic Application class to be used in other projects
+ * Basic Application class to be used in other projects.
+ * Reads Specified terminal functions and makes them available in terminal
  * @author Nico
  *
  */
@@ -43,7 +42,7 @@ public class TerminalApplication {
 	}
 	
 	/**
-	 * Prints help with notification that command was unnkown
+	 * Prints help with notification that command was unknown
 	 * @return
 	 */
 	private static String printUnkownCommandHelp() {
@@ -75,7 +74,9 @@ public class TerminalApplication {
 		}
 		
 		try {
-			emitTerminalfunction(TerminalApplication.class.getMethod("printHelpFunction"));
+			// default help function if none yet present
+			if (!functions.containsKey("help"))
+				emitTerminalfunction(TerminalApplication.class.getMethod("printHelpFunction"));
 		} catch (NoSuchMethodException | SecurityException e) {
 			// should not happen and therefore print stack trace
 			e.printStackTrace();
@@ -87,8 +88,8 @@ public class TerminalApplication {
 	 * @param f
 	 * @throws IllegalTerminalFunctionException
 	 */
-	private static void emitTerminalfunction(Method f) throws IllegalTerminalFunctionException {
-		// Only allow functions that return a String and only have parameters of type String
+	private static void emitTerminalfunction(Method f) throws IllegalTerminalFunctionException {		
+		// Only allow static functions that return a String and only have parameters of type String
 		if (!(f.getReturnType() == String.class 
 				&& Stream.of(f.getParameterTypes()).allMatch(type -> {return type == String.class;})
 				&& Modifier.isStatic(f.getModifiers()))) {
@@ -105,7 +106,10 @@ public class TerminalApplication {
 		});
 		
 		function.setMethod(f);
-		functions.put(function.getName(), function);	
+		
+		// only unique functions
+		if (! functions.containsKey(function.getName()))
+			functions.put(function.getName(), function);	
 	}
 	
 	
