@@ -3,12 +3,14 @@ package mylib.terminal;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import mylib.lambdautils.ThrowingConsumer;
 import mylib.terminal.exceptions.IllegalTerminalFunctionException;
+import mylib.util.StringUtil;
 
 /**
  * Basic Application class to be used in other projects.
@@ -19,6 +21,12 @@ import mylib.terminal.exceptions.IllegalTerminalFunctionException;
 public class TerminalApplication {
 	
 	private static HashMap<String, TerminalFunction> functions;
+	
+	private static final String[] reserverdWords  = {"exit", "interactive"};
+	
+	public static boolean isInteractive = false;
+	public static boolean exit = false;
+	public static boolean allowInteractiveMode = false;
 	
 	/**
 	 * Tries to invoke the function with name in first argument if functions exists
@@ -67,7 +75,7 @@ public class TerminalApplication {
 		// Scan in classes for terminal functions
 		for (Class<?> c : actionDefiningClasses) {
 			Stream.of(c.getMethods()).forEach((ThrowingConsumer<Method>)f -> {
-				if (f.isAnnotationPresent(TerminalAction.class)) {
+				if (f.isAnnotationPresent(TerminalAction.class) && !isReserved(f.getName())) {
 					emitTerminalfunction(f);
 				}
 			});
@@ -77,10 +85,18 @@ public class TerminalApplication {
 			// default help function if none yet present
 			if (!functions.containsKey("help"))
 				emitTerminalfunction(TerminalApplication.class.getMethod("printHelpFunction"));
+			if (allowInteractiveMode) {
+				emitTerminalfunction(TerminalApplication.class.getMethod("enableInteractiveModeFunction"));
+				emitTerminalfunction(TerminalApplication.class.getMethod("exitFunction"));
+			}
 		} catch (NoSuchMethodException | SecurityException e) {
 			// should not happen and therefore print stack trace
 			e.printStackTrace();
 		} 	
+	}
+
+	private static boolean isReserved(String name) {
+		return Arrays.stream(reserverdWords).anyMatch(s -> s.equals(name));
 	}
 
 	/**
@@ -121,6 +137,19 @@ public class TerminalApplication {
 			stringBuilder.append(System.lineSeparator());
 		});
 		return stringBuilder.toString();
+	}
+	
+	@TerminalAction("interactive")
+	public static String enableInteractiveModeFunction() {
+		isInteractive = true;
+		return StringUtil.empty();
+	}
+	
+	@TerminalAction("exit")
+	public static String exitFunction() {
+		isInteractive = false;
+		exit = true;
+		return StringUtil.empty();
 	}
 	
 }
