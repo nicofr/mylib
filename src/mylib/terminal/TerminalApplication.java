@@ -37,7 +37,7 @@ public class TerminalApplication {
 	 * @throws InvocationTargetException
 	 */
 	public static String perform(String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
-		if (functions.containsKey(args[0])) {
+		if (args.length > 0 && functions.containsKey(args[0])) {
 			TerminalFunction f = functions.get(args[0]);
 			if (f.accepts(args)) {
 				return f.perform(args);
