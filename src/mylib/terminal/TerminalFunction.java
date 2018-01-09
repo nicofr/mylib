@@ -18,11 +18,11 @@ public class TerminalFunction {
 		parameterHelpNames = new String[parameters];
 	}
 	
-	public void setParameterHelpName(String name, int pos) {
+	public final void setParameterHelpName(String name, int pos) {
 		parameterHelpNames[pos] = name;
 	}
 	
-	public void setMethod(Method m) {
+	public final void setMethod(Method m) {
 		this.method = m;
 	}
 	
@@ -43,8 +43,12 @@ public class TerminalFunction {
 		return stringBuilder.toString();
 	}
 
-	public String getName() {
+	public final String getName() {
 		return name;
+	}
+	
+	protected Method getMethod() {
+		return method;
 	}
 
 }
