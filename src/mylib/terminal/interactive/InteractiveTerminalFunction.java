@@ -1,7 +1,6 @@
 package mylib.terminal.interactive;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 import mylib.terminal.TerminalFunction;
 
@@ -18,7 +17,15 @@ public class InteractiveTerminalFunction extends TerminalFunction {
 	}
 	
 	public String perform(String[] args, InteractiveContext interactiveContext) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return (String) getMethod().invoke(null, args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : null, interactiveContext);
+		if (args.length > 1) 
+		{
+			Object[] param = new Object[args.length];
+			param[0] = interactiveContext;
+			for (int i = 1; i < args.length; i++) param[i] = args[i];
+			return (String) getMethod().invoke(null, param); 
+		}
+		else
+			return (String) getMethod().invoke(null, interactiveContext);
 	}
 
 }

@@ -3,16 +3,21 @@ package mylib.terminal;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import mylib.lambdautils.ThrowingConsumer;
+import mylib.terminal.exceptions.IllegalInteractiveTerminalFunctionException;
+import mylib.terminal.exceptions.IllegalPerformException;
 import mylib.terminal.exceptions.IllegalTerminalFunctionException;
 import mylib.terminal.interactive.InteractiveContext;
 import mylib.terminal.interactive.InteractiveTerminalAction;
-import mylib.util.StringUtil;
+import mylib.terminal.interactive.InteractiveTerminalFunction;
 
 /**
  * Basic Application class to be used in other projects.
@@ -33,9 +38,14 @@ public class TerminalApplication {
 	private HashMap<String, TerminalFunction> functions;
 	
 	/**
+	 * registered interactive functions
+	 */
+	private HashMap<String, InteractiveTerminalFunction> interactiveFunctions;
+	
+	/**
 	 * Singleton instance
 	 */
-	private static Optional<TerminalApplication> instance;
+	private static Optional<TerminalApplication> instance = Optional.ofNullable(null);
 	
 	/**
 	 * indicates if interactive mode is allowed
@@ -45,7 +55,7 @@ public class TerminalApplication {
 	/**
 	 * indicates if application operates currently in interactive mode
 	 */
-	private boolean inInteractiveMode = false;
+	boolean inInteractiveMode = false;
 	
 	/**
 	 * interactive context class
@@ -59,8 +69,12 @@ public class TerminalApplication {
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
+	 * @throws IllegalPerformException 
 	 */
-	public String perform(String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
+	public String perform(String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IllegalPerformException {	
+		if (functions == null) {
+			throw new IllegalPerformException("No functions registered");
+		}
 		if (args.length > 0 && functions.containsKey(args[0])) {
 			TerminalFunction f = functions.get(args[0]);
 			if (f.accepts(args)) {
@@ -74,12 +88,34 @@ public class TerminalApplication {
 	}
 	
 	/**
+	 * all names of registered Terminal functions for this application
+	 * @return
+	 */
+	public Set<String> getRegisteredFunctionNames() {
+		Set<String> result = new HashSet<>();
+		result.addAll(functions.keySet());
+		result.addAll(interactiveFunctions.keySet());
+		return result;
+	}
+	
+	/**
 	 * 
 	 * @param args
 	 * @return
+	 * @throws IllegalPerformException 
 	 */
-	public String performInteractive(String[] args, InteractiveContext context) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return null;
+	private String performInteractive(String[] args, InteractiveContext context) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IllegalPerformException {
+		if (args.length > 0 && interactiveFunctions.containsKey(args[0])) {
+			InteractiveTerminalFunction f = interactiveFunctions.get(args[0]);
+			if (f.accepts(args)) {
+				return f.perform(args, context);
+			} else {
+				return f.printHelp();
+			}
+		} else {
+			// try to run non interactively
+			return perform(args);
+		}
 	}
 	
 	
@@ -87,9 +123,7 @@ public class TerminalApplication {
 	 * check if given word is already reserved by default
 	 */
 	private static boolean isWordReserved(String word) {
-		for (int i = 0; i < RESERVED_WORDS.length; i++) 
-			if (word.equals(RESERVED_WORDS[i])) return true;
-		return false;
+		return Arrays.stream(RESERVED_WORDS).anyMatch(s -> s.equals(word));
 	}
 	
 	/**
@@ -124,7 +158,6 @@ public class TerminalApplication {
 	 * Singleton class
 	 */
 	private TerminalApplication() {
-		
 	}
 
 	/**
@@ -132,8 +165,9 @@ public class TerminalApplication {
 	 * function violates Terminal function specifications
 	 * @param actionDefiningClasses
 	 * @throws IllegalTerminalFunctionException
+	 * @throws IllegalInteractiveTerminalFunctionException 
 	 */
-	public void registerTerminalFunctions(Class<?>... actionDefiningClasses) throws IllegalTerminalFunctionException {
+	public void registerTerminalFunctions(Class<?>... actionDefiningClasses) throws IllegalTerminalFunctionException, IllegalInteractiveTerminalFunctionException {
 		functions = new HashMap<>();
 		// Scan in classes for terminal functions
 		for (Class<?> c : actionDefiningClasses) {
@@ -146,16 +180,65 @@ public class TerminalApplication {
 			});
 		}
 		
+		if (allowInteractiveMode) {
+			interactiveFunctions = new HashMap<>();
+			for (Class<?> c : actionDefiningClasses) {
+				Stream.of(c.getMethods()).forEach((ThrowingConsumer<Method>)f -> {
+					if (f.isAnnotationPresent(InteractiveTerminalAction.class)) {
+						if (!isWordReserved(f.getName()))
+							emitInteractiveTerminalfunction(f);
+						else throw new IllegalInteractiveTerminalFunctionException(f);
+					}
+				});
+			}
+		}
+		
 		try {
 			// default help function if none yet present
 			if (!functions.containsKey("help"))
-				emitTerminalfunction(TerminalApplication.class.getMethod("printHelpFunction"));
-			if (allowInteractiveMode) 
-				emitTerminalfunction(TerminalApplication.class.getMethod("interactive"));
+				emitTerminalfunction(this.getClass().getMethod("printHelpFunction"));
+			if (allowInteractiveMode) {
+				emitTerminalfunction(StandartFeatures.class.getMethod("startInteractiveFunction"));
+				emitTerminalfunction(StandartFeatures.class.getMethod("quitInteractiveFunction")); 
+			}
 		} catch (NoSuchMethodException | SecurityException e) {
 			// should not happen and therefore print stack trace
 			e.printStackTrace();
 		} 	
+	}
+
+	/**
+	 * See description for emitTerminalFunction
+	 * @param f
+	 * @throws IllegalTerminalFunctionException
+	 * @throws IllegalInteractiveTerminalFunctionException 
+	 */
+	private void emitInteractiveTerminalfunction(Method f) throws IllegalTerminalFunctionException, IllegalInteractiveTerminalFunctionException {
+		// Only allow static functions that return a String and only have parameters of type String
+		if (!(f.getReturnType() == String.class 
+				&& Stream.of(Arrays.copyOfRange(f.getParameterTypes(), 1, f.getParameterCount())).allMatch(
+						type -> {return type == String.class;})
+				&& f.getParameterTypes()[0].getSuperclass() == InteractiveContext.class 
+				&& Modifier.isStatic(f.getModifiers()))) {
+			throw new IllegalInteractiveTerminalFunctionException(f);
+		}
+		
+		InteractiveTerminalFunction function = new InteractiveTerminalFunction(f.getAnnotation(InteractiveTerminalAction.class).value(), f.getParameterCount()-1);
+		AtomicInteger i = new AtomicInteger(0);
+		
+		// Set parameter help names
+		Stream.of(f.getParameters()).forEachOrdered( p -> {
+			if (p.getType() == String.class)
+				function.setParameterHelpName(p.isAnnotationPresent(ParameterHelpName.class) ? 
+					p.getAnnotation(ParameterHelpName.class).value() : p.getName() , i.getAndIncrement());
+		});
+		
+		function.setMethod(f);
+		
+		// only unique functions
+		if (! interactiveFunctions.containsKey(function.getName()))
+			interactiveFunctions.put(function.getName(), function);
+		
 	}
 
 	/**
@@ -190,7 +273,7 @@ public class TerminalApplication {
 	/**
 	 * interactive mode
 	 */
-	private void startInteractiveMode() {
+	void startInteractiveMode() {
 		InteractiveContext interactiveContext;
 		try {
 			interactiveContext = interactiveContextClass.newInstance();
@@ -203,9 +286,14 @@ public class TerminalApplication {
 		
 		while (inInteractiveMode) {
 			try {
-				performInteractive(System.console().readLine().split(" "), interactiveContext);
+				System.out.print("\\>");
+				System.out.println(performInteractive(System.console().readLine().split("\\s"), interactiveContext));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
+				break;
+			} catch (IllegalPerformException e) {
+				e.printStackTrace();
+				break;
 			}
 		}
 	}
@@ -215,23 +303,11 @@ public class TerminalApplication {
 	@TerminalAction(value = "help")
 	public static String printHelpFunction() {
 		StringBuilder stringBuilder = new StringBuilder();
-		the().functions.forEach((key, f) -> {
+		TerminalApplication.the().functions.forEach((key,f) -> {
 			stringBuilder.append(f.printHelp());
 			stringBuilder.append(System.lineSeparator());
 		});
 		return stringBuilder.toString();
-	}
-	
-	@TerminalAction("interactive")
-	public static String startInteractiveFunction() {
-		the().startInteractiveMode();
-		return StringUtil.empty();
-	}
-	
-	@InteractiveTerminalAction("quit")
-	public static String quitInteractiveFunction(InteractiveContext context) {
-		the().inInteractiveMode = false;
-		return StringUtil.empty();
-	}
+	}	
 	
 }
