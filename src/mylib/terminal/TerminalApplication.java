@@ -17,7 +17,7 @@ import mylib.terminal.exceptions.IllegalPerformException;
 import mylib.terminal.exceptions.IllegalTerminalFunctionException;
 import mylib.terminal.interactive.InteractiveContext;
 import mylib.terminal.interactive.InteractiveTerminalAction;
-import mylib.terminal.interactive.InteractiveTerminalFunction;
+import mylib.terminal.interactive.InteractiveTerminalFunction; 
 
 /**
  * Basic Application class to be used in other projects.
