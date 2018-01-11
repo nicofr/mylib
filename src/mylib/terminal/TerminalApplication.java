@@ -307,6 +307,11 @@ public class TerminalApplication {
 			stringBuilder.append(f.printHelp());
 			stringBuilder.append(System.lineSeparator());
 		});
+		if (TerminalApplication.the().inInteractiveMode)
+			TerminalApplication.the().interactiveFunctions.forEach((key, f) -> {
+				stringBuilder.append(f.printHelp() +" -- interactive");
+				stringBuilder.append(System.lineSeparator());
+			}); 
 		return stringBuilder.toString();
 	}	
 	
