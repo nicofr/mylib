@@ -21,4 +21,15 @@ public class CollectionUtils {
 		return res;
 	}
 
+	
+	/**
+	 * casts collection to given type
+	 * @param arg
+	 * @return
+	 */
+	public static <TYPE> Collection<TYPE> cast(Collection<? extends TYPE> arg) {
+		Collection<TYPE> res = new ArrayList<>();
+		res.addAll(arg);
+		return res;
+	}
 }
