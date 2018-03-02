@@ -32,4 +32,17 @@ public class CollectionUtils {
 		res.addAll(arg);
 		return res;
 	}
+	
+	
+	/**
+	 * generates a list with a single entry
+	 * @param arg
+	 * @return
+	 */
+	public static <TYPE> List<TYPE> single(TYPE arg) {
+		List<TYPE> res = new ArrayList<>();
+		res.add(arg);
+		return res;
+	}
+
 }

@@ -25,6 +25,31 @@ public class StringUtil {
 	
 	/**
 	 * 
+	 * @param args
+	 * @return
+	 */
+	public static String concatIgnoringNulls(String... args) {
+		String res = "";
+		for (int i = 0; i < args.length; i++) {
+			res = res + (args[i] == null ? "" : args[i]);
+		}
+		return res;
+	}
+	
+	/**
+	 * 
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @param replacement
+	 * @return
+	 */
+	public static String replace(int startInclusive, int endExclusive, String replacement, String arg) {
+		if (arg.length() <= startInclusive) return arg;
+		return arg.substring(0, startInclusive) + replacement + arg.substring(Math.min(endExclusive, arg.length()));
+	}
+	
+	/**
+	 * 
 	 * @param arg
 	 * @return
 	 */
