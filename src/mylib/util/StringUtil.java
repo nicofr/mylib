@@ -2,6 +2,8 @@ package mylib.util;
 
 import java.util.List;
 
+import com.google.common.base.Splitter;
+
 public class StringUtil {
 	
 	/**
@@ -57,6 +59,28 @@ public class StringUtil {
 		StringBuilder sb = new StringBuilder();
 		arg.stream().forEachOrdered(s -> sb.append(s + System.lineSeparator()));
 		return sb.toString();
+	}
+	
+	/**
+	 * splits string into chunks of equals size (apart from last one) separated by line separator
+	 * @param arg
+	 * @param limit
+	 * @return
+	 */
+	public static String splitIntoLimitedLines(String arg, int limit) {
+		return Splitter.fixedLength(limit).splitToList(arg).stream().reduce((s1, s2) -> {
+			return s1 + System.lineSeparator() + s2;
+		}).orElse(StringUtil.empty());
+	}
+	
+	/**
+	 * splits string into list of strings with given length
+	 * @param arg
+	 * @param length
+	 * @return
+	 */
+	public static List<String> splitToListFixesLength(String arg, int length) {
+		return Splitter.fixedLength(length).splitToList(arg);
 	}
 
 }
