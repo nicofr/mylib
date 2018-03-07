@@ -16,7 +16,6 @@ import mylib.terminalredone.annotations.TerminalAction;
 import mylib.terminalredone.annotations.TerminalHelp;
 import mylib.terminalredone.exceptions.IllegalPerformException;
 import mylib.terminalredone.exceptions.IllegalTerminalFunctionException;
-import mylib.util.StringUtil;
 
 public class TerminalApplication {
 	
@@ -84,7 +83,7 @@ public class TerminalApplication {
 	 * @return
 	 */
 	private static String printUnkownCommandHelp() {
-		return "unknown command";
+		return printHelpFunction();
 	}
 	
 	/**
@@ -152,12 +151,10 @@ public class TerminalApplication {
 	 */
 	static String printHelp(TerminalFunction f) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(f.getName() + "\t\t" + f.getHelpText() + System.lineSeparator());
+		sb.append(">"+f.getName() + "\t\t" + f.getHelpText() + System.lineSeparator());
 		for (Parameter p : f.getParameters()) {
 			sb.append(p.getName());
-			for (String s : StringUtil.splitToListFixesLength(p.getHelpText(), 30)) {
-				sb.append("\t\t" + s+System.lineSeparator());
-			}
+			sb.append("\t\t" + p.getHelpText() + (p.isOptional() ? "(Optional)" : "") + (p.isArray() ? "(Array)" : "") +System.lineSeparator());
 		}
 		return sb.toString();
 	}
