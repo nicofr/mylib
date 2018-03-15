@@ -1,5 +1,6 @@
 package mylib.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Splitter;
@@ -38,6 +39,10 @@ public class StringUtil {
 		return res;
 	}
 	
+	public static List<String> splitToListAtLineEndings(String arg) {
+		return Arrays.asList(arg.split("\\r?\\n"));
+	}
+	
 	/**
 	 * 
 	 * @param startInclusive
@@ -59,6 +64,17 @@ public class StringUtil {
 		StringBuilder sb = new StringBuilder();
 		arg.stream().forEachOrdered(s -> sb.append(s + System.lineSeparator()));
 		return sb.toString();
+	}
+	
+	/**
+	 * 
+	 * @param arg
+	 * @return
+	 */
+	public static String joinWithSeparator(List<String> arg, String separator) {
+		StringBuilder sb = new StringBuilder();
+		arg.stream().forEachOrdered(s -> sb.append(s + separator));
+		return sb.toString().substring(0, sb.toString().length()-separator.length());
 	}
 	
 	/**
