@@ -71,7 +71,7 @@ public class TerminalFunction {
 			if (assignment != null) {
 				if (parameters.get(i).isArray()) {
 					orderedParameters[i] = ParameterUtil.splitValueToArray(assignment);
-				} else {
+				} else {	
 					orderedParameters[i] = ParameterUtil.getValue(assignment);
 				}
 			} else {

@@ -32,12 +32,19 @@ public class TerminalApplication {
 	/**
 	 * singleton instance
 	 */
-	private static java.util.Optional<TerminalApplication> instance = java.util.Optional.ofNullable(null);
+	private static java.util.Optional<TerminalApplication> instance = java.util.Optional.empty();
 	
+	/**
+	 * Constructor
+	 */
 	private TerminalApplication() {
 		functions = new HashMap<>();
 	}
 	
+	/**
+	 * Getter for singleton instance
+	 * @return
+	 */
 	public static TerminalApplication the() {
 		if (! instance.isPresent()) {
 			instance = java.util.Optional.of(new TerminalApplication());
