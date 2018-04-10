@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import mylib.lambdautils.ThrowingConsumer;
-import mylib.terminal.exceptions.IllegalInteractiveTerminalFunctionException;
 import mylib.terminalredone.annotations.Name;
 import mylib.terminalredone.annotations.Optional;
 import mylib.terminalredone.annotations.TerminalAction;
