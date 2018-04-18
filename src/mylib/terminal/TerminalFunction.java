@@ -1,4 +1,4 @@
-package mylib.terminalredone;
+package mylib.terminal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import mylib.terminalredone.exceptions.MissingParameterException;
-import mylib.terminalredone.util.ParameterUtil;
+import mylib.terminal.exceptions.MissingParameterException;
+import mylib.terminal.util.ParameterUtil;
 import mylib.util.StringUtil;
 
 /**

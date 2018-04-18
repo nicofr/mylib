@@ -1,4 +1,4 @@
-package mylib.terminalredone;
+package mylib.terminal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import mylib.lambdautils.ThrowingConsumer;
-import mylib.terminalredone.annotations.Name;
-import mylib.terminalredone.annotations.Optional;
-import mylib.terminalredone.annotations.TerminalAction;
-import mylib.terminalredone.annotations.TerminalHelp;
-import mylib.terminalredone.exceptions.IllegalPerformException;
-import mylib.terminalredone.exceptions.IllegalTerminalFunctionException;
+import mylib.terminal.annotations.Name;
+import mylib.terminal.annotations.Optional;
+import mylib.terminal.annotations.TerminalAction;
+import mylib.terminal.annotations.TerminalHelp;
+import mylib.terminal.exceptions.IllegalPerformException;
+import mylib.terminal.exceptions.IllegalTerminalFunctionException;
 
 public class TerminalApplication {
 	

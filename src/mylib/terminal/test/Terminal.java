@@ -1,10 +1,10 @@
-package mylib.terminalredone.test;
+package mylib.terminal.test;
 
 import java.lang.reflect.InvocationTargetException;
 
-import mylib.terminalredone.TerminalApplication;
-import mylib.terminalredone.exceptions.IllegalPerformException;
-import mylib.terminalredone.exceptions.IllegalTerminalFunctionException;
+import mylib.terminal.TerminalApplication;
+import mylib.terminal.exceptions.IllegalPerformException;
+import mylib.terminal.exceptions.IllegalTerminalFunctionException;
 
 public class Terminal {
 	

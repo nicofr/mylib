@@ -1,4 +1,4 @@
-package mylib.terminalredone.exceptions;
+package mylib.terminal.exceptions;
 
 public class IllegalPerformException extends Exception {
 	

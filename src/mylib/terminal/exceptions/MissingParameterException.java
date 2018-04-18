@@ -1,6 +1,6 @@
-package mylib.terminalredone.exceptions;
+package mylib.terminal.exceptions;
 
-import mylib.terminalredone.Parameter;
+import mylib.terminal.Parameter;
 
 @SuppressWarnings("serial")
 public class MissingParameterException extends IllegalPerformException {

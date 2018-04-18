@@ -1,11 +1,11 @@
-package mylib.terminalredone.test;
+package mylib.terminal.test;
 
 import java.util.Arrays;
 
-import mylib.terminalredone.annotations.Name;
-import mylib.terminalredone.annotations.Optional;
-import mylib.terminalredone.annotations.TerminalAction;
-import mylib.terminalredone.annotations.TerminalHelp;
+import mylib.terminal.annotations.Name;
+import mylib.terminal.annotations.Optional;
+import mylib.terminal.annotations.TerminalAction;
+import mylib.terminal.annotations.TerminalHelp;
 import mylib.util.StringUtil;
 
 public class Features {

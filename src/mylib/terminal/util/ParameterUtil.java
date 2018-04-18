@@ -1,4 +1,4 @@
-package mylib.terminalredone.util;
+package mylib.terminal.util;
 
 import java.util.Arrays;
 

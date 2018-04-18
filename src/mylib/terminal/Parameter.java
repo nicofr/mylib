@@ -1,4 +1,4 @@
-package mylib.terminalredone;
+package mylib.terminal;
 
 /**
  * Parameter of terminal function. Can be Optional. Can be set via "parametername=value"

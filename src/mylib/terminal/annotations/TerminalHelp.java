@@ -1,4 +1,4 @@
-package mylib.terminalredone.annotations;
+package mylib.terminal.annotations;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
