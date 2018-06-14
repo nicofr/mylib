@@ -46,4 +46,9 @@ public class CollectionUtils {
 	}
 
 
+	public static <T> Collection<T> empty() {
+		return new ArrayList<>();
+	}
+
+
 }

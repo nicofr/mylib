@@ -11,7 +11,7 @@ public abstract class ApplicationLogicControllerTest
 	protected abstract boolean expectException();
 	
 	@Test
-	public void dotest() {
+	public final void dotest() {
 		if (! expectException())
 			try {
 				Assert.assertTrue(checkResult(getInstance().perform()));
