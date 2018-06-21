@@ -9,6 +9,11 @@ package mylib;
  */
 public interface ApplicationLogicController <RESTYPE extends ControllerResult, EXTYPE extends Exception> {
 	
+	/**
+	 * The functionality that is the purpose of this object is triggered here.
+	 * @return
+	 * @throws EXTYPE
+	 */
 	public RESTYPE perform() throws EXTYPE;
 
 }

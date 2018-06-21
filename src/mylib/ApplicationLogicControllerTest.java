@@ -10,20 +10,26 @@ public abstract class ApplicationLogicControllerTest
 	protected abstract ApplicationLogicController<RESULT_TYPE, EX_TYPE> getInstance();
 	protected abstract boolean expectException();
 	
+	protected abstract void before();
+	protected abstract void after();
+	
 	@Test
 	public final void dotest() {
+		before();
 		if (! expectException())
 			try {
 				Assert.assertTrue(checkResult(getInstance().perform()));
 			} catch (Exception e) {
-				Assert.assertFalse(true);
+				e.printStackTrace();
+				Assert.fail();
 			}
 		else 
 			try {
 				getInstance().perform();
-				Assert.assertFalse(true);
+				Assert.fail();
 			} catch (Exception e) {
 			}
+		after();
 	}
 	
 }
