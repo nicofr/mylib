@@ -1,11 +1,18 @@
 package mylib.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import mylib.collections.Pair;
+import mylib.collections.TwoKeyMap;
 
 public class CollectionUtils {
 	
@@ -22,7 +29,26 @@ public class CollectionUtils {
 		});
 		return res;
 	}
+	
+	/**
+	 * Generates list of csv values for map
+	 * @param map
+	 * @return
+	 */
+	public static List<String> toCSV(Map<?,?> map) {
+		return map.entrySet().stream().map(e -> e.getKey().toString() + ","+e.getValue().toString()).collect(Collectors.toList());
+	}
 
+	
+	/**
+	 * calculates inverse mapping of given argument
+	 * @param map
+	 * @param arg
+	 * @return
+	 */
+	public static <L,R> Collection<L> mapInverse(Map<L,R> map, R arg) {
+		return map.keySet().stream().filter(key -> map.get(key) == arg).collect(Collectors.toList());
+	}
 	
 	/**
 	 * casts collection to given type
@@ -32,6 +58,21 @@ public class CollectionUtils {
 	public static <TYPE> Collection<TYPE> cast(Collection<? extends TYPE> arg) {
 		Collection<TYPE> res = new ArrayList<>();
 		res.addAll(arg);
+		return res;
+	}
+	
+	
+	/**
+	 * generates union of lists
+	 * @param lists
+	 * @return
+	 */
+	@SafeVarargs
+	public static <T> List<T> union(List<T>... lists) {
+		List<T> res = new ArrayList<>();
+		for (int i = 0; i < lists.length; i++) {
+			res.addAll(lists[i]);
+		}
 		return res;
 	}
 	
@@ -67,19 +108,19 @@ public class CollectionUtils {
 	}
 	
 	/**
-	 * 
+	 * for easier and prettier code
 	 */
 	public static <T> Collection<T> filter(Collection<T> c, Predicate<T> p) {
 		return c.stream().filter(p).collect(Collectors.toList());
 	}
 	
 	/**
-	 * calls toString() on all elements of given colleciton
+	 * calls toString() on all elements of given collection
 	 * @param arg
 	 * @return
 	 */
 	public static Collection<String> toString(Collection<?> arg) {
-		return arg.stream().map(o -> o.toString()).collect(Collectors.toList());
+		return map(arg, o -> o.toString());
 	}
 	
 	/**
@@ -88,7 +129,53 @@ public class CollectionUtils {
 	 * @return
 	 */
 	public static Collection<Integer> toIds(Collection<? extends HasId> arg) {
-		return arg.stream().map(h -> h.getId()).collect(Collectors.toList());
+		return map(arg, o -> o.getId());
+	}
+	
+	/**
+	 * 
+	 * @param collection
+	 * @param f
+	 * @return
+	 */
+	public static <T,R> Collection<R> map(Collection<T> collection, Function<T,R> f) {
+		return collection.stream().map(o -> f.apply(o)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Generates a list from given parameters
+	 * @param args
+	 * @return
+	 */
+	@SafeVarargs
+	public static <T> List<T> toList(T... args) {
+		return Arrays.asList(args);
+	}
+	
+	/**
+	 * Generates a submap of the given two key map
+	 * @param map
+	 * @param key2
+	 * @return
+	 */
+	public static <K1, K2, V> Map<K1, V> subMapFirstKey(TwoKeyMap<K1, K2, V> map, K2 key2) {
+		Map<K1, V> res = new HashMap<>();
+		Collection<Entry<Pair<K1, K2>, V>> submap = map.entrySet().stream().filter(e -> e.getKey().getR().equals(key2)).collect(Collectors.toList());
+		submap.forEach(e -> res.put(e.getKey().getL(), e.getValue()));
+		return res;
+	}
+	
+	/**
+	 * Generates a submap of the given two key map
+	 * @param map
+	 * @param key2
+	 * @return
+	 */
+	public static <K1, K2, V> Map<K2, V> subMapSecondKey(TwoKeyMap<K1, K2, V> map, K1 key1) {
+		Map<K2, V> res = new HashMap<>();
+		Collection<Entry<Pair<K1, K2>, V>> submap = map.entrySet().stream().filter(e -> e.getKey().getL().equals(key1)).collect(Collectors.toList());
+		submap.forEach(e -> res.put(e.getKey().getR(), e.getValue()));
+		return res;
 	}
 
 }

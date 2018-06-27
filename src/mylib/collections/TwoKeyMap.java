@@ -13,4 +13,5 @@ public class TwoKeyMap<K1, K2, V> extends HashMap<Pair<K1, K2>,V> {
 		return get(new Pair<K1, K2>(key1, key2));
 	}
 	
+	
 }
