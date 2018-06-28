@@ -38,6 +38,15 @@ public class CollectionUtils {
 	public static List<String> toCSV(Map<?,?> map) {
 		return map.entrySet().stream().map(e -> e.getKey().toString() + ","+e.getValue().toString()).collect(Collectors.toList());
 	}
+	
+	/**
+	 * Generates a collection of csv entries
+	 * @param arg
+	 * @return
+	 */
+	public static Collection<String> toCSV(Collection<? extends CSVable> arg) {
+		return map(arg, o -> o.toCSV());
+	}
 
 	
 	/**
