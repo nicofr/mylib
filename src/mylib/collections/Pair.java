@@ -26,5 +26,10 @@ public class Pair<L,R> {
 		Pair<?,?> other = (Pair<?,?>) obj;
 		return l.equals(other.getL()) && r.equals(other.getR());
 	}
+	
+	@Override
+	public String toString() {
+		return "("+l.toString()+", "+r.toString()+")";
+	}
 
 }

@@ -56,7 +56,7 @@ public class CollectionUtils {
 	 * @return
 	 */
 	public static <L,R> Collection<L> mapInverse(Map<L,R> map, R arg) {
-		return map.keySet().stream().filter(key -> map.get(key) == arg).collect(Collectors.toList());
+		return map.keySet().stream().filter(key -> map.get(key).equals(arg)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -92,9 +92,7 @@ public class CollectionUtils {
 	 * @return
 	 */
 	public static <TYPE> List<TYPE> single(TYPE arg) {
-		List<TYPE> res = new ArrayList<>();
-		res.add(arg);
-		return res;
+		return toList(arg);
 	}
 
 
@@ -184,6 +182,32 @@ public class CollectionUtils {
 		Map<K2, V> res = new HashMap<>();
 		Collection<Entry<Pair<K1, K2>, V>> submap = map.entrySet().stream().filter(e -> e.getKey().getL().equals(key1)).collect(Collectors.toList());
 		submap.forEach(e -> res.put(e.getKey().getR(), e.getValue()));
+		return res;
+	}
+	
+	/**
+	 * 
+	 * @param csvcontent
+	 * @return
+	 */
+	public static Map<String, String> readCSVMap(List<String> csvcontent, String splt) {
+		Map<String, String> res = new HashMap<>();
+		for (String s : csvcontent) {
+			res.put(s.split(splt)[0], s.split(splt)[1]);
+		}
+		return res;
+	}
+	
+	/**
+	 * 
+	 * @param csvcontent
+	 * @return
+	 */
+	public static Map<Integer, Integer> readCSVIntegerMap(List<String> csvcontent, String splt) {
+		Map<Integer, Integer> res = new HashMap<>();
+		for (String s : csvcontent) {
+			res.put(Integer.valueOf(s.split(splt)[0]), Integer.valueOf(s.split(splt)[1]));
+		}
 		return res;
 	}
 
