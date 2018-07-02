@@ -93,6 +93,7 @@ public class CollectionUtils {
 	 */
 	public static <TYPE> List<TYPE> single(TYPE arg) {
 		ArrayList<TYPE> res = new ArrayList<>();
+		res.add(arg);
 		return res;
 	}
 
