@@ -92,7 +92,8 @@ public class CollectionUtils {
 	 * @return
 	 */
 	public static <TYPE> List<TYPE> single(TYPE arg) {
-		return toList(arg);
+		ArrayList<TYPE> res = new ArrayList<>();
+		return res;
 	}
 
 
