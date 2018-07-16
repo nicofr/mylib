@@ -3,6 +3,7 @@ package mylib.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,16 @@ public class CollectionUtils {
 	public static Collection<String> toCSV(Collection<? extends CSVable> arg) {
 		return map(arg, o -> o.toCSV());
 	}
-
+	
+	
+	/**
+	 * reads intger values seperated by ',' from String and resturns as collection
+	 * @param arg
+	 * @return
+	 */
+	public static Collection<Integer> getInts(String arg , String sep) {
+		return map(Arrays.asList(arg.split(sep)), s -> Integer.valueOf(s));
+	}
 	
 	/**
 	 * calculates inverse mapping of given argument
@@ -70,6 +80,26 @@ public class CollectionUtils {
 		return res;
 	}
 	
+	
+	/**
+	 * Generates a randomized partition of the given collection which each subset (but the last one) have the given size
+	 * @param arg
+	 * @param partitionsize
+	 * @return
+	 */
+	public static <TYPE extends HasId> Collection<Collection<Integer>> getRandomIdPartition(Collection<TYPE> arg, int partitionsize) {
+		List<Integer> ids = arg.stream().map(mv -> mv.getId()).collect(Collectors.toList());
+		Collections.shuffle(ids);
+		List<Collection<Integer>> partition = new ArrayList<>();
+		for (int i = 0; i < ids.size(); i = i + partitionsize) {
+			List<Integer> curpart = new ArrayList<>();
+			for (int j = 0; j < partitionsize && j+i < arg.size(); j++) {
+				curpart.add(ids.get(j+i));
+			}
+			partition.add(curpart);
+		}
+		return partition;
+	}
 	
 	/**
 	 * generates union of lists
