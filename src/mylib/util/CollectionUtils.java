@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -228,6 +229,15 @@ public class CollectionUtils {
 			res.put(s.split(splt)[0], s.split(splt)[1]);
 		}
 		return res;
+	}
+	
+	public static <EX_TYPE extends Exception, ETYPE> ETYPE findOrElseThrow(Collection<ETYPE> set, Predicate<ETYPE> cond, EX_TYPE exception) throws EX_TYPE  {
+		Optional<ETYPE> element =  set.stream().filter(cond).findFirst();
+		if (element.isPresent()) {
+			return element.get();
+		} else {
+			throw exception;
+		}
 	}
 	
 	/**
