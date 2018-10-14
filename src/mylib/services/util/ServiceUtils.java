@@ -36,13 +36,13 @@ public class ServiceUtils {
 	}
 	
 	private static void validateFlag(Field f, Collection<String> flagNames) throws ServiceException {
-		if (flagNames.contains(getFlagName(f))) throw new ServiceException(ServiceErrorId.ParamNameInUse, getParamName(f));
-		if (! f.getType().equals(Boolean.class)) throw new ServiceException(ServiceErrorId.InvalidFlag, getParamName(f)+" is not of type Boolean");
+		if (flagNames.contains(getFlagName(f))) throw new ServiceException(ServiceErrorId.ParamNameInUse, getFlagName(f));
+		if (! f.getType().equals(Boolean.class) && !f.getType().equals(boolean.class)) throw new ServiceException(ServiceErrorId.InvalidFlag, getFlagName(f)+" is not of type Boolean");
 		flagNames.add(getFlagName(f));
 	}
 	
 	private static String getFlagName(Field f) throws ServiceException {
-		if (isFieldServiceParameter(f)) {
+		if (isFieldServiceFlag(f)) {
 			return f.getAnnotation(Flag.class).Name();
 		}
 		throw new ServiceException(ServiceErrorId.FieldIsNoFlag, f.getName());
@@ -62,7 +62,7 @@ public class ServiceUtils {
 
 	private static void validateParam(Field f, Collection<String> paramNames) throws ServiceException{
 		if (paramNames.contains(getParamName(f))) throw new ServiceException(ServiceErrorId.ParamNameInUse, getParamName(f));
-		if (!f.getType().equals(String.class) && hasStringMapper(f)) throw new ServiceException(ServiceErrorId.InvalidParameter, getParamName(f)+" is not of type String or has no String mapper");
+		if (!f.getType().equals(String.class) && !hasStringMapper(f)) throw new ServiceException(ServiceErrorId.InvalidParameter, getParamName(f)+" is not of type String or has no String mapper");
 		if (f.getModifiers() != Modifier.PRIVATE) throw new ServiceException(ServiceErrorId.InvalidParameter, getParamName(f) + " is not private");
 		paramNames.add(getParamName(f));
 	}
@@ -132,6 +132,31 @@ public class ServiceUtils {
 
 	public static boolean isParamOptional(Field f) {
 		return f.getAnnotation(Param.class).Optional();
+	}
+
+
+	public static boolean isArgFlag(String string) {
+		return string.charAt(0) == '-';
+	}
+
+
+	public static String parseFlag(String string) {
+		return string.substring(1);
+	}
+
+
+	public static boolean isArgParam(String string) {
+		 return string.contains("=");
+	}
+
+
+	public static String parseParamName(String string) {
+		return string.substring(0, string.indexOf("="));
+	}
+
+
+	public static String parseParamValue(String string) {
+		return string.substring(string.indexOf("=")+1, string.length());
 	}
 	
 }

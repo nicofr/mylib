@@ -25,6 +25,10 @@ public class ServiceException extends Exception {
 		return this.errorId;
 	}
 
+	@Override
+	public String getMessage() {
+		return errorId.getMessage() +": "+ info;
+	}
 	
 
 }

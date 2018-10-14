@@ -9,7 +9,7 @@ public class StoreIntegerService extends Service {
 	public static int setValue = 0;
 	
 	@Flag(Name = "n")
-	boolean negate;
+	boolean neg;
 	
 	@Param(Ident = "value", MapperClassName = "mylib.services.components.standardmappers.StringToIntegerMapper")
 	private Integer value;
@@ -19,8 +19,10 @@ public class StoreIntegerService extends Service {
 	}
 
 	@Override
-	public void perform() {
-		setValue = negate ? value * -1 : value;
+	public String perform() {
+		setValue = neg ? value * -1 : value;
+		System.out.println(setValue);
+		return "";
 	}
 
 }
