@@ -21,7 +21,7 @@ public class TerminalApplication {
 	/**
 	 * reserved words that can not be used for custom functions
 	 */
-	private static final String[] RESERVED_WORDS = {"help"};
+	private static final String[] RESERVED_WORDS = {"help, h, ?"};
 	
 	/**
 	 * all funcions with identifiers
@@ -127,27 +127,27 @@ public class TerminalApplication {
 	 */
 	private void emitTerminalfunction(Method f) throws IllegalTerminalFunctionException {
 		// Only allow static functions that return a String and only have parameters of type String
-				if (!(f.getReturnType() == String.class 
-						&& Stream.of(f.getParameterTypes()).allMatch(type -> {return type == String.class || type == String[].class;})
-						&& Modifier.isStatic(f.getModifiers()))) {
-					throw new IllegalTerminalFunctionException(f);
-				}
-				
-				String name = f.isAnnotationPresent(TerminalAction.class) ? f.getAnnotation(TerminalAction.class).value() : f.getName();
-				String helpText = f.isAnnotationPresent(TerminalHelp.class) ? f.getAnnotation(TerminalHelp.class).value() : null;
-				
-				TerminalFunction function = new TerminalFunction(name, f, helpText);
-				for (int i = 0; i < f.getParameterCount(); i++) {
-					Parameter paramater = new Parameter(f.getParameters()[i].isAnnotationPresent(Name.class) ? f.getParameters()[i].getAnnotation(Name.class).value() : f.getParameters()[i].getName(),
-							f.getParameters()[i].isAnnotationPresent(Optional.class),
-							f.getParameters()[i].isAnnotationPresent(TerminalHelp.class) ? f.getParameters()[i].getAnnotation(TerminalHelp.class).value() : "",
-							f.getParameterTypes()[i] == String[].class);
-					function.addParameter(paramater);
-				}
-				
-				// only unique functions
-				if (! functions.containsKey(function.getName()))
-					functions.put(function.getName(), function);	
+		if (!(f.getReturnType() == String.class 
+				&& Stream.of(f.getParameterTypes()).allMatch(type -> {return type == String.class || type == String[].class;})
+				&& Modifier.isStatic(f.getModifiers()))) {
+			throw new IllegalTerminalFunctionException(f);
+		}
+		
+		String name = f.isAnnotationPresent(TerminalAction.class) ? f.getAnnotation(TerminalAction.class).value() : f.getName();
+		String helpText = f.isAnnotationPresent(TerminalHelp.class) ? f.getAnnotation(TerminalHelp.class).value() : null;
+		
+		TerminalFunction function = new TerminalFunction(name, f, helpText);
+		for (int i = 0; i < f.getParameterCount(); i++) {
+			Parameter paramater = new Parameter(f.getParameters()[i].isAnnotationPresent(Name.class) ? f.getParameters()[i].getAnnotation(Name.class).value() : f.getParameters()[i].getName(),
+					f.getParameters()[i].isAnnotationPresent(Optional.class),
+					f.getParameters()[i].isAnnotationPresent(TerminalHelp.class) ? f.getParameters()[i].getAnnotation(TerminalHelp.class).value() : "",
+					f.getParameterTypes()[i] == String[].class);
+			function.addParameter(paramater);
+		}
+		
+		// only unique functions
+		if (! functions.containsKey(function.getName()))
+			functions.put(function.getName(), function);	
 	}	
 	
 	/**

@@ -5,7 +5,7 @@ import java.util.List;
 
 import mylib.services.util.ParamStringMapper;
 
-public class StringToStringListMapper extends ParamStringMapper<List<String>> {
+public class StringToStringListMapper implements ParamStringMapper<List<String>> {
 
 	@Override
 	public List<String> map(String in) {

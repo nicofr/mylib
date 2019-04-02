@@ -3,11 +3,12 @@ package mylib.services.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import mylib.services.Service;
-import mylib.services.annotations.Flag;
-import mylib.services.annotations.Param;
+import mylib.services.ExportsService;
+import mylib.services.annotations.ExportParam;
 import mylib.services.exceptions.ServiceErrorId;
 import mylib.services.exceptions.ServiceException;
 import mylib.services.exceptions.ServiceWrapperException;
@@ -17,38 +18,16 @@ public class ServiceUtils {
 	
 	private ServiceUtils() {}
 	
-	
-	public static void validateService(Service service) throws ServiceException {
+	public static void validateService(ExportsService service) throws ServiceException {
 		Collection<String> paramNames = CollectionUtils.empty();
-		Collection<String> flagNames = CollectionUtils.empty();
 		for (Field field : service.getClass().getDeclaredFields()) {
 			if (isFieldServiceParameter(field)) {
 				validateParam(field, paramNames);
 			}
-			if (isFieldServiceFlag(field)) {
-				validateFlag(field, flagNames);
-			}
 		}
 	}
 	
-	private static boolean isFieldServiceFlag(Field f) {
-		return f.getAnnotation(Flag.class) != null;
-	}
-	
-	private static void validateFlag(Field f, Collection<String> flagNames) throws ServiceException {
-		if (flagNames.contains(getFlagName(f))) throw new ServiceException(ServiceErrorId.ParamNameInUse, getFlagName(f));
-		if (! f.getType().equals(Boolean.class) && !f.getType().equals(boolean.class)) throw new ServiceException(ServiceErrorId.InvalidFlag, getFlagName(f)+" is not of type Boolean");
-		flagNames.add(getFlagName(f));
-	}
-	
-	private static String getFlagName(Field f) throws ServiceException {
-		if (isFieldServiceFlag(f)) {
-			return f.getAnnotation(Flag.class).Name();
-		}
-		throw new ServiceException(ServiceErrorId.FieldIsNoFlag, f.getName());
-	}
-
-	public static Field getFlagByName(String name, Service service) throws ServiceException {
+	public static Field getFlagByName(String name, ExportsService service) throws ServiceException {
 		Field f;
 		try {
 			f = service.getClass().getDeclaredField(name);
@@ -68,37 +47,33 @@ public class ServiceUtils {
 	}
 	
 	public static boolean isFieldServiceParameter(Field f) {
-		return f.getAnnotation(Param.class) != null;
+		return f.getAnnotation(ExportParam.class) != null;
 	}
 	
 	public static String getParamName(Field f) throws ServiceException {
 		if (isFieldServiceParameter(f)) {
-			return f.getAnnotation(Param.class).Ident();
+			return f.getAnnotation(ExportParam.class).Ident();
 		}
 		throw new ServiceException(ServiceErrorId.FieldIsNoParameter, f.getName());
 	}
 	
 	private static boolean hasStringMapper(Field f) throws ServiceException {
 		if (isFieldServiceParameter(f)) {
-			try {
-				return f.getAnnotation(Param.class).MapperClassName() != null &&  ParamStringMapper.class.isAssignableFrom(Class.forName(f.getAnnotation(Param.class).MapperClassName()));
-			} catch (ClassNotFoundException e) {
-				return false;
-			}
+			return f.getAnnotation(ExportParam.class).MapperClass() != null &&  ParamStringMapper.class.isAssignableFrom(f.getAnnotation(ExportParam.class).MapperClass());
 		}
 		throw new ServiceException(ServiceErrorId.FieldIsNoParameter, f.getName());
 	}
 	
 	public static ParamStringMapper<?> getMapper(Field f) throws ServiceWrapperException {
 		try {
-			return (ParamStringMapper<?>) Class.forName(f.getAnnotation(Param.class).MapperClassName()).getConstructor().newInstance();
+			return (ParamStringMapper<?>) f.getAnnotation(ExportParam.class).MapperClass().getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+				| NoSuchMethodException | SecurityException e) {
 			throw new ServiceWrapperException(e);
 		}
 	}
 
-	public static Field getParamByName(String name, Service service) throws ServiceException {
+	public static Field getParamByName(String name, ExportsService service) throws ServiceException {
 		Field f;
 		try {
 			f = service.getClass().getDeclaredField(name);
@@ -120,7 +95,7 @@ public class ServiceUtils {
 	}
 
 
-	public static boolean hasServiceParamWithName(Service service, String paramName) {
+	public static boolean hasServiceParamWithName(ExportsService service, String paramName) {
 		try {
 			getParamByName(paramName, service);
 		} catch (ServiceException e) {
@@ -129,34 +104,32 @@ public class ServiceUtils {
 		return true;
 	}
 
+	public static List<String> getParamArguments(int posParam, String... strings) {
+		List<String> res = new ArrayList<>();
+		for (int i = posParam+1; i < strings.length && !isArgParam(strings[i]); i++) {
+			res.add(strings[i]);
+		}
+		return res;
+		
+	}
 
 	public static boolean isParamOptional(Field f) {
-		return f.getAnnotation(Param.class).Optional();
-	}
-
-
-	public static boolean isArgFlag(String string) {
-		return string.charAt(0) == '-';
-	}
-
-
-	public static String parseFlag(String string) {
-		return string.substring(1);
+		return f.getAnnotation(ExportParam.class).Optional();
 	}
 
 
 	public static boolean isArgParam(String string) {
-		 return string.contains("=");
+		 return string.startsWith("-");
 	}
-
 
 	public static String parseParamName(String string) {
-		return string.substring(0, string.indexOf("="));
+		return string.substring(1, string.length());
 	}
 
 
-	public static String parseParamValue(String string) {
-		return string.substring(string.indexOf("=")+1, string.length());
+	public static String printAllParamHelp(ExportsService service) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

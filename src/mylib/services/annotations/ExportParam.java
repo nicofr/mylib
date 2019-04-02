@@ -6,12 +6,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import mylib.services.components.standardmappers.IdentityMapper;
+
 @Retention(RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Param {
+public @interface ExportParam {
 	
 	String Ident();
-	String MapperClassName();
+	Class<?> MapperClass() default IdentityMapper.class;
 	boolean Optional() default false;
+	String Help() default "";
 	
 }

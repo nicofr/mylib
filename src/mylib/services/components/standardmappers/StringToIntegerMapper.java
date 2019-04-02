@@ -2,7 +2,7 @@ package mylib.services.components.standardmappers;
 
 import mylib.services.util.ParamStringMapper;
 
-public class StringToIntegerMapper extends ParamStringMapper<Integer> {
+public class StringToIntegerMapper implements ParamStringMapper<Integer> {
 
 	@Override
 	public Integer map(String in) {

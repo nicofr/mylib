@@ -1,28 +1,34 @@
 package mylib.services.test.example.services;
 
-import mylib.services.Service;
-import mylib.services.annotations.Flag;
-import mylib.services.annotations.Param;
+import mylib.services.ExportsService;
+import mylib.services.annotations.ExportParam;
+import mylib.services.components.standardmappers.StringToBooleanMapper;
 
-public class StoreIntegerService extends Service {
+public class StoreIntegerService implements ExportsService {
+	
+	static {
+		// uncomment to test
+		//ExportsService.register(StoreIntegerService.class);
+	}
 	
 	public static int setValue = 0;
 	
-	@Flag(Name = "n")
-	boolean neg;
+	@ExportParam(Ident = "neg", MapperClass = StringToBooleanMapper.class)
+	private boolean neg;
 	
-	@Param(Ident = "value", MapperClassName = "mylib.services.components.standardmappers.StringToIntegerMapper")
+	@ExportParam(Ident = "value", MapperClass = mylib.services.components.standardmappers.StringToIntegerMapper.class)
 	private Integer value;
 
-	public StoreIntegerService() {
-		super("store");
-	}
-
 	@Override
-	public String perform() {
+	public String performService() {
 		setValue = neg ? value * -1 : value;
 		System.out.println(setValue);
 		return "";
+	}
+
+	@Override
+	public String getServiceName() {
+		return "store";
 	}
 
 }
