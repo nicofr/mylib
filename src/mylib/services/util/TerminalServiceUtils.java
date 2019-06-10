@@ -7,18 +7,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import mylib.services.ExportsService;
+import mylib.services.ExportsTerminalService;
 import mylib.services.annotations.ExportParam;
 import mylib.services.exceptions.ServiceErrorId;
 import mylib.services.exceptions.ServiceException;
 import mylib.services.exceptions.ServiceWrapperException;
 import mylib.util.CollectionUtils;
 
-public class ServiceUtils {
+public class TerminalServiceUtils {
 	
-	private ServiceUtils() {}
+	private TerminalServiceUtils() {}
 	
-	public static void validateService(ExportsService service) throws ServiceException {
+	public static void validateService(ExportsTerminalService service) throws ServiceException {
 		Collection<String> paramNames = CollectionUtils.empty();
 		for (Field field : service.getClass().getDeclaredFields()) {
 			if (isFieldServiceParameter(field)) {
@@ -27,7 +27,7 @@ public class ServiceUtils {
 		}
 	}
 	
-	public static Field getFlagByName(String name, ExportsService service) throws ServiceException {
+	public static Field getFlagByName(String name, ExportsTerminalService service) throws ServiceException {
 		Field f;
 		try {
 			f = service.getClass().getDeclaredField(name);
@@ -73,7 +73,7 @@ public class ServiceUtils {
 		}
 	}
 
-	public static Field getParamByName(String name, ExportsService service) throws ServiceException {
+	public static Field getParamByName(String name, ExportsTerminalService service) throws ServiceException {
 		Field f;
 		try {
 			f = service.getClass().getDeclaredField(name);
@@ -95,7 +95,7 @@ public class ServiceUtils {
 	}
 
 
-	public static boolean hasServiceParamWithName(ExportsService service, String paramName) {
+	public static boolean hasServiceParamWithName(ExportsTerminalService service, String paramName) {
 		try {
 			getParamByName(paramName, service);
 		} catch (ServiceException e) {
@@ -127,7 +127,7 @@ public class ServiceUtils {
 	}
 
 
-	public static String printAllParamHelp(ExportsService service) {
+	public static String printAllParamHelp(ExportsTerminalService service) {
 		// TODO Auto-generated method stub
 		return null;
 	}

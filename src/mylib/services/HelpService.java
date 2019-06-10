@@ -1,9 +1,9 @@
 package mylib.services;
 
 import mylib.services.annotations.ExportParam;
-import mylib.services.util.ServiceUtils;
+import mylib.services.util.TerminalServiceUtils;
 
-public class HelpService implements ExportsService {
+public class HelpService implements ExportsTerminalService {
 	
 	@ExportParam(Ident = "n", Optional = true, Help = "Name of service of which help text should be printed")
 	private String targetname;
@@ -11,16 +11,16 @@ public class HelpService implements ExportsService {
 	@Override
 	public String performService() {
 		if (targetname != null) {
-			if (ServiceDispatcher.getRegisteredServices().containsKey(targetname)) {
-				ExportsService service = ServiceDispatcher.getRegisteredServices().get(targetname);
-				return getServiceName() +": " + service.getHelpText() + ServiceUtils.printAllParamHelp(service);
+			if (TerminalDispatcher.getRegisteredServices().containsKey(targetname)) {
+				ExportsTerminalService service = TerminalDispatcher.getRegisteredServices().get(targetname);
+				return getServiceName() +": " + service.getHelpText() + TerminalServiceUtils.printAllParamHelp(service);
 			} else {
 				return "No such servcie";
 			}
 		} else {
 			String res = getServiceName() +": ";
-			for (ExportsService service : ServiceDispatcher.getRegisteredServices().values()) {
-				res = res + service.getHelpText() + ServiceUtils.printAllParamHelp(service) + System.lineSeparator();
+			for (ExportsTerminalService service : TerminalDispatcher.getRegisteredServices().values()) {
+				res = res + service.getHelpText() + TerminalServiceUtils.printAllParamHelp(service) + System.lineSeparator();
 			}
 			return res;
 		}

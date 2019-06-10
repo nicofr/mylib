@@ -252,5 +252,25 @@ public class CollectionUtils {
 		}
 		return res;
 	}
+	
+	/**
+	 * 
+	 * @param clazz
+	 * @param items
+	 * @return
+	 */
+	public static <T> Collection<T> cast(Class<T> clazz, Collection<?> items) {
+		return items.stream().map(clazz::cast).collect(Collectors.toList());
+	}
+	
+	/**
+	 * 
+	 * @param clazz
+	 * @param items
+	 * @return
+	 */
+	public static <T> Collection<T> filterInstanceOf(Class<T> clazz, Collection<?> items) {
+		return items.stream().filter(clazz::isInstance).map(clazz::cast).collect(Collectors.toList());
+	}
 
 }

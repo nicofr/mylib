@@ -1,10 +1,10 @@
 package mylib.services.test.example.services;
 
-import mylib.services.ExportsService;
+import mylib.services.ExportsTerminalService;
 import mylib.services.annotations.ExportParam;
 import mylib.services.components.standardmappers.StringToBooleanMapper;
 
-public class StoreIntegerService implements ExportsService {
+public class StoreIntegerService implements ExportsTerminalService {
 	
 	static {
 		// uncomment to test

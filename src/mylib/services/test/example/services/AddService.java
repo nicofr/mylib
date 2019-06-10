@@ -2,13 +2,13 @@ package mylib.services.test.example.services;
 
 import java.util.List;
 
-import mylib.services.ExportsService;
-import mylib.services.ServiceDispatcher;
+import mylib.services.ExportsTerminalService;
+import mylib.services.TerminalDispatcher;
 import mylib.services.annotations.ExportParam;
 import mylib.services.components.standardmappers.StringToIntegerMapper;
 import mylib.services.exceptions.ServiceException;
 
-public class AddService implements ExportsService {
+public class AddService implements ExportsTerminalService {
 	
 	static {
 		// uncomment to test
