@@ -12,7 +12,7 @@ public class AddService implements ExportsTerminalService {
 	
 	static {
 		// uncomment to test
-		//ExportsService.register(AddService.class);
+//		ExportsTerminalService.register(AddService.class);
 	}
 	
 	@ExportParam(Ident = "args", MapperClass=StringToIntegerMapper.class)

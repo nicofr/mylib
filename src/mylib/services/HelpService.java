@@ -18,9 +18,9 @@ public class HelpService implements ExportsTerminalService {
 				return "No such servcie";
 			}
 		} else {
-			String res = getServiceName() +": ";
+			String res = "";
 			for (ExportsTerminalService service : TerminalDispatcher.getRegisteredServices().values()) {
-				res = res + service.getHelpText() + TerminalServiceUtils.printAllParamHelp(service) + System.lineSeparator();
+				res = res + service.getServiceName() + ": " + service.getHelpText() + TerminalServiceUtils.printAllParamHelp(service) + System.lineSeparator();
 			}
 			return res;
 		}

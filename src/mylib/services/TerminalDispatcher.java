@@ -30,6 +30,22 @@ public class TerminalDispatcher {
 		// standard help service
 		services = new HashMap<>();
 	}
+	
+	public static void interactive() {
+		try {
+			registerService(QuitService.class);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static boolean running() {
+		return instance.isRunning();
+	}
+	
+	private boolean isRunning() {
+		return !(getRegisteredServices().containsKey("quit") && ((QuitService)getRegisteredServices().get("quit")).isQuit());
+	}
 
 	private <TYPE extends ExportsTerminalService> void _registerService(Class<TYPE> serviceClass) throws ServiceException {
 		try {

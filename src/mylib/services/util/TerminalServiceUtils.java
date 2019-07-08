@@ -129,7 +129,7 @@ public class TerminalServiceUtils {
 
 	public static String printAllParamHelp(ExportsTerminalService service) {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 	
 }

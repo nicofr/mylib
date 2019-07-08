@@ -6,11 +6,6 @@ import mylib.services.components.standardmappers.StringToBooleanMapper;
 
 public class StoreIntegerService implements ExportsTerminalService {
 	
-	static {
-		// uncomment to test
-		//ExportsService.register(StoreIntegerService.class);
-	}
-	
 	public static int setValue = 0;
 	
 	@ExportParam(Ident = "neg", MapperClass = StringToBooleanMapper.class)
@@ -29,6 +24,11 @@ public class StoreIntegerService implements ExportsTerminalService {
 	@Override
 	public String getServiceName() {
 		return "store";
+	}
+	
+	@Override
+	public String getHelpText() {
+		return "Stores integer";
 	}
 
 }
