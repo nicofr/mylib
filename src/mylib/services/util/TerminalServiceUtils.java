@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import mylib.services.ExportsTerminalService;
 import mylib.services.annotations.ExportParam;
@@ -30,11 +31,10 @@ public class TerminalServiceUtils {
 	public static Field getFlagByName(String name, ExportsTerminalService service) throws ServiceException {
 		Field f;
 		try {
-			f = service.getClass().getDeclaredField(name);
+			f = Stream.of(service.getClass().getDeclaredFields())
+					.filter(element -> element.getAnnotation(ExportParam.class).Ident().equals(name)).findFirst().orElse(null);
 		} catch (SecurityException e) {
 			throw new ServiceWrapperException(e);
-		} catch (NoSuchFieldException e) {
-			throw new ServiceException(ServiceErrorId.NoSuchFlag, name);
 		}
 		return f;
 	}
