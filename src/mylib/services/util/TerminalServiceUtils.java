@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import mylib.services.ExportsTerminalService;
+import mylib.services.annotations.ExportFlag;
 import mylib.services.annotations.ExportParam;
 import mylib.services.exceptions.ServiceErrorId;
 import mylib.services.exceptions.ServiceException;
@@ -41,13 +42,18 @@ public class TerminalServiceUtils {
 
 	private static void validateParam(Field f, Collection<String> paramNames) throws ServiceException{
 		if (paramNames.contains(getParamName(f))) throw new ServiceException(ServiceErrorId.ParamNameInUse, getParamName(f));
-		if (!f.getType().equals(String.class) && !hasStringMapper(f)) throw new ServiceException(ServiceErrorId.InvalidParameter, getParamName(f)+" is not of type String or has no String mapper");
+		if (!f.getType().equals(String.class) && !hasStringMapper(f) && !isFieldServiceFlag(f)) throw new ServiceException(ServiceErrorId.InvalidParameter, getParamName(f)+" is not of type String or has no String mapper");
+		if (!(!isFieldServiceFlag(f) || f.getType().isAssignableFrom(Boolean.class))) throw new ServiceException(ServiceErrorId.InvalidParameter, getParamName(f)+" Flag is not of type boolean");
 		if (f.getModifiers() != Modifier.PRIVATE) throw new ServiceException(ServiceErrorId.InvalidParameter, getParamName(f) + " is not private");
 		paramNames.add(getParamName(f));
 	}
 	
+	public static boolean isFieldServiceFlag(Field f) {
+		return f.getAnnotation(ExportFlag.class) != null;
+	}
+	
 	public static boolean isFieldServiceParameter(Field f) {
-		return f.getAnnotation(ExportParam.class) != null;
+		return f.getAnnotation(ExportParam.class) != null || isFieldServiceFlag(f);
 	}
 	
 	public static String getParamName(Field f) throws ServiceException {
@@ -110,7 +116,6 @@ public class TerminalServiceUtils {
 			res.add(strings[i]);
 		}
 		return res;
-		
 	}
 
 	public static boolean isParamOptional(Field f) {
